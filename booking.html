@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MoiBook — புதிய முன்பதிவு</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">
+          <img src="logo/moibook-icon-128.png" alt="MoiBook logo" />
+        </div>
+        <div>
+          <div class="brand-name">MoiBook / மொய்புக்</div>
+          <div class="brand-sub">Digital tradition</div>
+        </div>
+      </div>
+      <a class="chip" href="index.html">Back</a>
+    </header>
+
+    <main class="container">
+      <section class="form-card" id="booking-form">
+        <div class="form-header">
+          <a class="back" href="index.html">←</a>
+          <h3>புதிய முன்பதிவு</h3>
+        </div>
+        <h2>விசேஷ முன்பதிவு</h2>
+        <form class="booking-form" id="bookingForm" method="POST" target="hiddenFrame">
+          <div class="form-grid">
+            <label>
+              விழா வகை (Event Selection)
+              <select name="eventType" required>
+                <option>திருமணவிழா</option>
+                <option>திருமண வரவேற்ப்பு விழா</option>
+                <option>காதணி விழா</option>
+                <option>பூப்புனித நீராட்டு விழா</option>
+                <option>புதுமனை புகுவிழா</option>
+                <option>இல்ல விழா</option>
+                <option>வசந்த விழா</option>
+              </select>
+            </label>
+            <label>
+              இடம் - மண்டபம் (Venue)
+              <input name="venue" type="text" placeholder="எ.கா: ராஜி மண்டபம், மதுரை" required />
+            </label>
+            <label>
+              பத்திரிக்கை எண்ணிக்கை *
+              <input name="invitationCount" type="number" placeholder="500" required />
+            </label>
+            <label>
+              நாள் (Date) *
+              <input name="date" type="date" required />
+            </label>
+            <label>
+              நேரம் (Time) *
+              <input name="time" type="time" required />
+            </label>
+            <label>
+              பெயர் (Name) *
+              <input name="name" type="text" placeholder="அருண் குமார்" required />
+            </label>
+            <label>
+              தொடர்பு எண் *
+              <input name="phone" type="tel" placeholder="9876543210" required />
+            </label>
+          </div>
+          <div class="form-actions">
+            <button class="primary full" type="submit">உறுதி செய்ய (Confirm)</button>
+            <div class="form-status" id="formStatus" aria-live="polite"></div>
+          </div>
+        </form>
+        <iframe name="hiddenFrame" class="hidden-frame" title="hidden"></iframe>
+      </section>
+    </main>
+  </div>
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxK5ANk872Xk_V7xMlbro3p1ZhxSKc86Z2Kk2BmXWrypmAdMehXZ2VfJRL0oIi6n7Sq/exec";
+    const form = document.getElementById("bookingForm");
+    const statusEl = document.getElementById("formStatus");
+
+    form.action = SCRIPT_URL;
+    form.addEventListener("submit", () => {
+      statusEl.textContent = "சேமிக்கிறது...";
+      setTimeout(() => {
+        form.reset();
+        statusEl.textContent = "முன்பதிவு சேமிக்கப்பட்டது. Sheet-ல் சரிபார்க்கவும்.";
+      }, 1200);
+    });
+  </script>
+</body>
+</html>

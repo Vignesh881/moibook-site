@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MoiBook — Admin பதிவுகள்</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">
+          <img src="logo/moibook-icon-128.png" alt="MoiBook logo" />
+        </div>
+        <div>
+          <div class="brand-name">MoiBook / மொய்புக்</div>
+          <div class="brand-sub">Digital tradition</div>
+        </div>
+      </div>
+      <a class="chip" href="index.html">Back</a>
+    </header>
+
+    <main class="container">
+      <section class="admin-card">
+        <h2>Admin பதிவுகள்</h2>
+        <p>இங்கு உங்கள் முன்பதிவுகளை நீங்கள் மட்டும் பார்க்கலாம்.</p>
+        <div class="admin-login">
+          <label>
+            Admin Password
+            <input id="adminPassword" type="password" placeholder="உங்கள் password" />
+          </label>
+          <button class="primary" id="adminLogin">View</button>
+        </div>
+        <div class="form-status" id="adminStatus" aria-live="polite"></div>
+        <div class="table-wrap">
+          <table class="admin-table" id="adminTable">
+            <thead>
+              <tr>
+                <th>நேரம்</th>
+                <th>விழா வகை</th>
+                <th>இடம்</th>
+                <th>பத்திரிக்கை எண்ணிக்கை</th>
+                <th>நாள்</th>
+                <th>நேரம்</th>
+                <th>பெயர்</th>
+                <th>தொடர்பு</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxK5ANk872Xk_V7xMlbro3p1ZhxSKc86Z2Kk2BmXWrypmAdMehXZ2VfJRL0oIi6n7Sq/exec";
+    const adminStatus = document.getElementById("adminStatus");
+    const adminLogin = document.getElementById("adminLogin");
+    const adminPassword = document.getElementById("adminPassword");
+    const adminTableBody = document.querySelector("#adminTable tbody");
+
+    function formatDateTime(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleString("ta-IN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    function formatDateOnly(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString("ta-IN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    }
+
+    function formatTimeOnly(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleTimeString("ta-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    function renderRows(rows) {
+      adminTableBody.innerHTML = "";
+      rows.forEach((row) => {
+        const tr = document.createElement("tr");
+        row.forEach((cell, index) => {
+          const td = document.createElement("td");
+          if (index === 0) {
+            td.textContent = formatDateTime(cell);
+          } else if (index === 4) {
+            td.textContent = formatDateOnly(cell);
+          } else if (index === 5) {
+            td.textContent = formatTimeOnly(cell);
+          } else {
+            td.textContent = cell || "-";
+          }
+          tr.appendChild(td);
+        });
+        adminTableBody.appendChild(tr);
+      });
+    }
+
+    adminLogin.addEventListener("click", async () => {
+      const password = adminPassword.value.trim();
+      if (!password) {
+        adminStatus.textContent = "Password கொடுக்கவும்.";
+        return;
+      }
+
+      adminStatus.textContent = "ஏற்றுகிறது...";
+      try {
+        const response = await fetch(`${SCRIPT_URL}?password=${encodeURIComponent(password)}`);
+        const result = await response.json();
+        if (!result.ok) {
+          adminStatus.textContent = "Password தவறாக உள்ளது.";
+          return;
+        }
+        renderRows(result.rows || []);
+        adminStatus.textContent = `மொத்த பதிவுகள்: ${(result.rows || []).length}`;
+      } catch (error) {
+        adminStatus.textContent = "பதிவுகளை பெற முடியவில்லை.";
+      }
+    });
+  </script>
+</body>
+</html>
